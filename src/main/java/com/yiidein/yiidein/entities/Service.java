@@ -20,6 +20,7 @@ public class Service {
 	private Long id;
 	private String nom;
 	private String adresse;
+	private String email;
 	private String telephone;
 	private String description;
 	@OneToMany(mappedBy = "service")
