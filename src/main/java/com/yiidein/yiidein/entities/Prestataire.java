@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor @AllArgsConstructor
 public class Prestataire extends Utilisateur {
 
+	@Id
+	private String id;
 	private String nom;
 	@OneToMany(mappedBy = "prestataire")
 	private List<RendezVous> rendezVous;

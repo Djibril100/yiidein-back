@@ -8,11 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Entity
 @Data
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @NoArgsConstructor @AllArgsConstructor
-public class Utilisateur {
+public abstract class Utilisateur {
 
 	@Id
 	private String id;

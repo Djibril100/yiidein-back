@@ -16,10 +16,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor @AllArgsConstructor
 public class Client extends Utilisateur {
 	
+	@Id
+	private String id;
 	private String prenom;
 	private String nom;
 	private String genre;
 	private String adresse;
+	private String email;
 	private String telephone;
 	@OneToMany(mappedBy = "client")
 	private List<RendezVous> rendezVous;
