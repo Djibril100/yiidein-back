@@ -23,5 +23,5 @@ public class Prestataire extends Utilisateur {
 	@OneToMany(mappedBy = "prestataire")
 	private List<RendezVous> rendezVous;
 	@ManyToOne
-	private Service service;
+	private Service_ service;
 }

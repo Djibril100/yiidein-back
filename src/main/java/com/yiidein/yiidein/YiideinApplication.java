@@ -9,12 +9,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.yiidein.yiidein.dtos.ClientDTO;
+import com.yiidein.yiidein.dtos.ServiceDTO;
 import com.yiidein.yiidein.entities.Client;
 import com.yiidein.yiidein.entities.Prestataire;
-import com.yiidein.yiidein.entities.Service;
+import com.yiidein.yiidein.entities.Service_;
 import com.yiidein.yiidein.exceptions.ClientNotFoundException;
 import com.yiidein.yiidein.exceptions.ClientOrPrestataireNotFoundException;
-import com.yiidein.yiidein.services.YiideinServiceInt;
+import com.yiidein.yiidein.exceptions.ServiceNotFoundException;
+import com.yiidein.yiidein.services.YiideinServiceClientInterface;
+import com.yiidein.yiidein.services.YiideinServiceInterface;
+import com.yiidein.yiidein.services.YiideinServicePrestataireInterface;
 
 @SpringBootApplication
 public class YiideinApplication {
@@ -24,7 +29,9 @@ public class YiideinApplication {
 	}
 	
 	@Bean
-	CommandLineRunner start(YiideinServiceInt yiidein) {
+	CommandLineRunner start(YiideinServiceClientInterface yiideinClient, 
+							YiideinServiceInterface yiideinService,
+							YiideinServicePrestataireInterface yiideinPrestataire) {
 		
 		return args->{
 			String[] prenoms = {"Djibril", "Souleymane", "Yaya", "Oumar", "Ibrahim", "Mohamed", "Aly"};
@@ -35,48 +42,48 @@ public class YiideinApplication {
 			String[] genres = {"Masculin", "Feminin"};
 			String[] motifs = {"Depot", "Retrait"};
 			Stream.of("Barry", "Diallo", "Soumah", "Camara", "Bangoura", "Bah", "Sylla").forEach(nom->{
-				Client client = new Client();
-				client.setNom(nom);
+				ClientDTO clientDTO = new ClientDTO();
+				clientDTO.setNom(nom);
 				String prenom = prenoms[new Random().nextInt(prenoms.length)];
-				client.setPrenom(prenom);
-				client.setEmail(prenom+"."+nom+"@gmail.com");
+				clientDTO.setPrenom(prenom);
+				clientDTO.setEmail(prenom+"."+nom+"@gmail.com");
 				String telephone = phones[new Random().nextInt(phones.length)];
-				client.setTelephone(telephone);
+				clientDTO.setTelephone(telephone);
 				String adresse = adresses[new Random().nextInt(adresses.length)];
-				client.setAdresse(adresse);
+				clientDTO.setAdresse(adresse);
 				String genre = genres[new Random().nextInt(genres.length)];
-				client.setGenre(genre);
-				yiidein.saveClient(client);
+				clientDTO.setGenre(genre);
+				yiideinClient.saveClient(clientDTO);
 			});
 			Stream.of("Campus France", "Capago", "ONABE", "Documents Biometriques", "CHU Donka")
 						.forEach(nom->{
-						Service service = new Service();
-						service.setNom(nom);
-						service.setEmail(nom+"@yahoo.fr");
+						ServiceDTO serviceDTO = new ServiceDTO();
+						serviceDTO.setNom(nom);
+						serviceDTO.setEmail(nom+"@yahoo.fr");
 						String adresse = adresses[new Random().nextInt(adresses.length)];
-						service.setAdresse(adresse);
+						serviceDTO.setAdresse(adresse);
 						String telephone = phones[new Random().nextInt(phones.length)];
-						service.setTelephone(telephone);
-						yiidein.saveService(service);
+						serviceDTO.setTelephone(telephone);
+						yiideinService.saveService(serviceDTO);
 					});
-			yiidein.services().forEach(service->{
+			yiideinService.services().forEach(service->{
 				for (int i = 0; i < 10; i++) {
 					String nom = prestataires[new Random().nextInt(prestataires.length)];
 					try {
-						yiidein.savePrestataire(service.getId(), nom);
-					} catch (ClientNotFoundException e) {
+						yiideinPrestataire.savePrestataire(service.getId(), nom);
+					} catch (ServiceNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 				
 			});
-			yiidein.prestataires().forEach(prestataire->{
-				List<Client> clients = yiidein.clients();
-				for(Client client: clients) {
+			yiideinPrestataire.prestataires().forEach(prestataire->{
+				List<ClientDTO> clients = yiideinClient.clients();
+				for(ClientDTO clientDTO: clients) {
 					String motif = motifs[new Random().nextInt(motifs.length)];
 					try {
-						yiidein.saveRendezVous(client.getId(), prestataire.getId(), motif);
+						yiideinClient.saveRendezVous(clientDTO.getId(), prestataire.getId(), motif);
 					} catch (ClientOrPrestataireNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
